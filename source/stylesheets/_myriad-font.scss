@@ -1,0 +1,21 @@
+@font-face {
+	font-family: 'myriad_pro';
+	src: font-url('myriadpro-light-webfont.eot');
+	src: font-url('myriadpro-light-webfont.eot?#iefix') format('embedded-opentype'),
+		font-url('myriadpro-light-webfont.woff') format('woff'), 
+		font-url('myriadpro-light-webfont.ttf') format('truetype'), 
+		font-url('myriadpro-light-webfont.svg#myriad_pro_lightregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'myriad_pro';
+	src: font-url('myriadpro-semibold-webfont.eot');
+	src: font-url('myriadpro-semibold-webfont.eot?#iefix') format('embedded-opentype'),
+		font-url('myriadpro-semibold-webfont.woff') format('woff'), 
+		font-url('myriadpro-semibold-webfont.ttf') format('truetype'), 
+		font-url('myriadpro-semibold-webfont.svg#myriad_pro_semibold') format('svg');
+	font-weight: bold;
+	font-style: normal;
+}
