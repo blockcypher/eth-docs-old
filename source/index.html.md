@@ -1,5 +1,5 @@
 ---
-title: Blockchain Developer API for Ethereum | Blockcypher
+title: Blockchain Developer API for Ethereum | BlockCypher
 seo_description: Build Ethereum applications easily with our web APIs and callbacks. High throughputs, linear scaling, low-latency. Over 99.99% uptime with no single point of failure.
 
 language_tabs:
@@ -15,16 +15,36 @@ includes:
   - tx
 ---
 
-# Introduction to Ethereum
+# Introduction
 
 ```shell
-#  _               _                  
-# |_) |  _   _ |  /     ._  |_   _  ._
-# |_) | (_) (_ |< \_ \/ |_) | | (/_ | 
-#                    /  |             
+#   ^
+#  / \    _               _
+# / ^ \  |_) |  _   _ |  /     ._  |_   _  ._
+#<     > |_) | (_) (_ |< \_ \/ |_) | | (/_ |
+# \ v /                     /  |
+#  \ /
+#   v
 ```
 
-Welcome to [BlockCypher's](http://www.blockcypher.com/) Ethereum API documentation!
+Welcome to [BlockCypher's](http://www.blockcypher.com/) Ethereum API documentation! If you're familiar with our Bitcoin endpoints, you'll feel right at home with our Ethereum API. However, there are a few differences, and they stem in part from the fundamental differences between Bitcoin and Ethereum. In the most abstract sense, Bitcoin and Ethereum are cousins; they both have "blocks" of transactions linked together into a chain, they both use Proof of Work to reach consensus (for now, as Ethereum plans to move to Proof of Stake in a future release), they are both about decentralizing trust. But that's where the similarities end. Here are just some of Ethereum's differences:
+
+- There are no UTXOs, only "accounts" (of two varieties)
+- Block time is significantly shorter; 15 second target instead of 10 minutes
+- Miners get rewards for including references to orphan blocks (so called "uncle blocks")
+- Ethereum's scripting language is far more expressive than Bitcoin's; typically advanced transactions/contracts are constructed using a higher level language then converted into EVM bytecode
+- Ethereum has no strict cap on monetary supply (ether supply)
+- Transactions cost "gas" to run (denominated in ether) depending on how computationally expensive they are to run. Blocks also have total gas limits to prevent runaway computation/keep the network decentralized.
+
+In a nutshell, Bitcoin is about decentralized, trust-minimizing, sound money. Ethereum is about decentralized, trust-minimizing, sound computation. Much more detail about these differences can be read at the [Ethereum Wiki here.](https://github.com/ethereum/wiki/wiki/Design-Rationale) You can find more information at the [project's webpage as well.](https://ethereum.org/)
+
+<aside class="warning">
+As with our other coin/chain nodes, we rebuilt an Ethereum node from the ground up to support much higher scale and throughput, but it's a lot newer than our other implementations. THIS IS VERY MUCH A BETA. Things may break/it might not be suitable for production applications. 
+</aside>
+
+<aside class="notice">
+We don't have the full suite of API endpoints compared to Bitcoin, but we are always adding more as our implementation matures. Check these docs for the latest features.
+</aside>
 
 ## Documentation Structure
 
@@ -35,7 +55,7 @@ DESCRIPTION
 curl is a tool to transfer data from or to a server, using one of the supported protocols (DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, TELNET and TFTP). The command is designed to work without user interaction.
 ```
 
-In these docs you'll find everything you need to leverage BlockCypher for your Ethereum applications. For now, you'll see cURL examples for interacting with the Ethereum blockchain, but we'll add SDK examples as we support them. 
+In these docs you'll find everything you need to start working with Ethereum with BlockCypher. For now, you'll see cURL examples for interacting with the Ethereum blockchain, but we'll add SDK examples as we support them.
 
 ### Section Summaries
 
@@ -55,7 +75,23 @@ All API calls are versioned, and the current BlockCypher API is v1. **The BlockC
 ## RESTful Resources
 
 ```shell
-curl https://eth.api.call.here
+curl https://api.blockcypher.com/v1/eth/main
+{
+  "name": "ETH.main",
+  "height": 1656653,
+  "hash": "c5e3a1df5a295fa536fe2d7f8201f529153753665763e20dd9329659136d0c3c",
+  "time": "2016-06-06T21:53:30.368223984Z",
+  "latest_url": "https://api.blockcypher.com/v1/eth/main/blocks/c5e3a1df5a295fa536fe2d7f8201f529153753665763e20dd9329659136d0c3c",
+  "previous_hash": "781c3b4eb45895cab359a15f6b947c54d6974e9829eaf6937531098107c35e46",
+  "previous_url": "https://api.blockcypher.com/v1/eth/main/blocks/781c3b4eb45895cab359a15f6b947c54d6974e9829eaf6937531098107c35e46",
+  "peer_count": 200,
+  "unconfirmed_count": 11619,
+  "high_fee_per_kb": 40000000000,
+  "medium_fee_per_kb": 20000000000,
+  "low_fee_per_kb": 5000000000,
+  "last_fork_height": 1654102,
+  "last_fork_hash": "7c592f2594eea525754819ed15345a765db0a63e492bac833cb667296c3dee37"
+}
 ```
 
 Almost all resources exist under a given blockchain, and follow this pattern:
@@ -66,21 +102,21 @@ Currently, there's only one version of the API (v1). For Ethereum, this is the r
 
 Coin | Chain | Resource
 ---- | ----- | --------
-Ethereum | Main | `api.blockcypher.com/ether/endpoint/here`
+Ethereum | Main | `api.blockcypher.com/v1/eth/main`
 
 <aside class="notice">
 Unless otherwise noted, all descriptions of direct HTTP requests will assume one of these base resources prepends it. But you can always see the full call in the cURL code sample.
 </aside>
 
 <aside class="success">
-Our API <b>always</b> returns values in wei, the lowest non-divisible unit in Ethereum. As a friendly reminder, there are 10^18 wei in a single ether (1,000,000,000,000,000,000w = 1ETH).
+Our API <b>always</b> returns values in wei, the lowest non-divisible unit in Ethereum. As a friendly reminder, there are 10^18 wei in a single ether (1,000,000,000,000,000,000w = 1ETH). Some say it's wei too much subdivision, but we disagree.
 </aside>
 
 ## Rate Limits and Tokens
 
 ```shell
 # Adding your token as URL parameter
-curl https://api.blockcypher.com/ether/path/here?token=$YOURTOKEN
+curl https://api.blockcypher.com/v1/eth/main?token=YOURTOKEN
 
 # Checking your token's limits
 curl https://api.blockcypher.com/v1/tokens/YOURTOKEN
@@ -125,38 +161,73 @@ You can check your current limits and usage via a **GET** on the following endpo
 ## Batching
 
 ```shell
-# Batching blocks 5, 6, and 7
-curl 'https://api.blockcypher.com/v1/btc/main/blocks/5;6;7'
-
+# Batching blocks 5, 6, and 7 from Ethereum
+curl 'https://api.blockcypher.com/v1/eth/main/blocks/5;6;7'
 [{
-"hash": "000000003031a0e73735690c5a1ff2a4be82553b2a12b776fbd3a215dc8f778d",
-"height": 6,
-"chain": "BTC.main",
-"total": 0,
-"fees": 0,
-"ver": 1,
-"time": "2009-01-09T03:29:49Z",
-...,
+  "hash": "f37c632d361e0a93f08ba29b1a2c708d9caa3ee19d1ee8d2a02612bffe49f0a9",
+  "height": 5,
+  "chain": "ETH.main",
+  "total": 0,
+  "fees": 0,
+  "size": 537,
+  "ver": 0,
+  "time": "2015-07-30T15:28:03Z",
+  "received_time": "2015-07-30T15:28:03Z",
+  "coinbase_addr": "05a56e2d52c817161883f50c441c3228cfe54d9f",
+  "relayed_by": "",
+  "nonce": 18134254966252788979,
+  "n_tx": 0,
+  "prev_block": "23adf5a3be0f5235b36941bcb29b62504278ec5b9cdfa277b992ba4a7a3cd3a2",
+  "mrkl_root": "4470f3dc1cc8097394a4ae85302eac3368462b3c1cfa523ffca942c1dd478220",
+  "txids": [],
+  "depth": 1656648,
+  "prev_block_url": "https://api.blockcypher.com/v1/eth/main/blocks/23adf5a3be0f5235b36941bcb29b62504278ec5b9cdfa277b992ba4a7a3cd3a2",
+  "tx_url": "https://api.blockcypher.com/v1/eth/main/txs/"
 },
 {
-"hash": "000000009b7262315dbf071787ad3656097b892abffd1f95a1a022f896f533fc",
-"height": 5,
-"chain": "BTC.main",
-"total": 0,
-"fees": 0,
-"ver": 1,
-"time": "2009-01-09T03:23:48Z",
-...,
+  "hash": "1f1aed8e3694a067496c248e61879cda99b0709a1dfbacd0b693750df06b326e",
+  "height": 6,
+  "chain": "ETH.main",
+  "total": 0,
+  "fees": 0,
+  "size": 537,
+  "ver": 0,
+  "time": "2015-07-30T15:28:27Z",
+  "received_time": "2015-07-30T15:28:27Z",
+  "coinbase_addr": "0193d941b50d91be6567c7ee1c0fe7af498b4137",
+  "relayed_by": "",
+  "nonce": 8915216988711600153,
+  "n_tx": 0,
+  "prev_block": "f37c632d361e0a93f08ba29b1a2c708d9caa3ee19d1ee8d2a02612bffe49f0a9",
+  "mrkl_root": "c211464e6957ae62a33c2146cf36371222ea4557c42efe9c618971e09d056aae",
+  "txids": [],
+  "depth": 1656647,
+  "prev_block_url": "https://api.blockcypher.com/v1/eth/main/blocks/f37c632d361e0a93f08ba29b1a2c708d9caa3ee19d1ee8d2a02612bffe49f0a9",
+  "tx_url": "https://api.blockcypher.com/v1/eth/main/txs/"
 },
 {
-"hash": "0000000071966c2b1d065fd446b1e485b2c9d9594acd2007ccbd5441cfc89444",
-"height": 7,
-"chain": "BTC.main",
-"total": 0,
-"fees": 0,
-"ver": 1,
-"time": "2009-01-09T03:39:29Z",
-...,
+  "hash": "e0c7c0b46e116b874354dce6f64b8581bd239186b03f30a978e3dc38656f723a",
+  "height": 7,
+  "chain": "ETH.main",
+  "total": 0,
+  "fees": 0,
+  "size": 1078,
+  "ver": 0,
+  "time": "2015-07-30T15:28:30Z",
+  "received_time": "2015-07-30T15:28:30Z",
+  "coinbase_addr": "dd2f1e6e498202e86d8f5442af596580a4f03c2c",
+  "relayed_by": "",
+  "nonce": 13599487003767981,
+  "n_tx": 0,
+  "prev_block": "1f1aed8e3694a067496c248e61879cda99b0709a1dfbacd0b693750df06b326e",
+  "mrkl_root": "ff8d97d9ca01ee59c793c4da2ba4ce8c31d358b42f216ab2f11af4bb097b6a2b",
+  "uncles": [
+    "4b8729311c5b59f418c5154fd54d85e6a8b42eabf83a1d3c05c754a8f10354cc"
+  ],
+  "txids": [],
+  "depth": 1656646,
+  "prev_block_url": "https://api.blockcypher.com/v1/eth/main/blocks/1f1aed8e3694a067496c248e61879cda99b0709a1dfbacd0b693750df06b326e",
+  "tx_url": "https://api.blockcypher.com/v1/eth/main/txs/"
 }]
 ```
 
