@@ -327,7 +327,7 @@ curl -s https://api.blockcypher.com/v1/eth/main/addrs/738d145faabb1e00cf5a017588
 }
 ```
 
-An Address represents the state of an Ethereum address/account, containing information about the state of balances and transactions related to this address. Typically returned from the [Address Balance](#address-balance-endpoint), [Address](#address-endpoint), and [Address Detail Endpoint](#address-detail-endpoint).
+An Address represents the state of an Ethereum address/account, containing information about the state of balances and transactions related to this address. Typically returned from the [Address Balance](#address-balance-endpoint) and [Address](#address-endpoint) endpoints.
 
 Attribute | Type | Description
 --------- | ---- | -----------
@@ -341,9 +341,8 @@ Attribute | Type | Description
 **unconfirmed_n_tx** | *integer* | Number of unconfirmed transactions for this address. Only unconfirmed transactions (confirmations == 0) are counted.
 **final_n_tx** | *integer* | Final number of transactions, including confirmed and unconfirmed transactions, for this address.
 **tx_url** | *url* | ***Optional*** To retrieve base URL transactions. To get the full URL, concatenate this URL with a transaction's hash.
-**txs** | *array[[TX](#tx)]* | ***Optional***  Array of full transaction details associated with this address. Usually only returned from the [Address Detail Endpoint](#address-detail).
 **txrefs** | *array[[TXRef](#txref)]* | ***Optional*** Array of transaction summaries for this address. Usually only returned from the standard [Address Endpoint](#address-endpoint).
-**unconfirmed_txrefs** | *array[[TXRef](#txref)]* | ***Optional*** All unconfirmed transaction inputs and outputs for this address. Usually only returned from the standard [Address Endpoint](#address-endpoint).
+**unconfirmed_txrefs** | *array[[TXRef](#txref)]* | ***Optional*** All unconfirmed transaction summaries for this address. Usually only returned from the standard [Address Endpoint](#address-endpoint).
 **hasMore** | *bool* | ***Optional*** If *true*, then the Address object contains more transactions than shown. Useful for determining whether to poll the API for more transaction information.
 
 ## AddressKeychain

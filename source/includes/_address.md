@@ -91,7 +91,7 @@ curl -s https://api.blockcypher.com/v1/eth/main/addrs/738d145faabb1e00cf5a017588
 }
 ```
 
-The Address Endpoint returns more information about an address' transactions than the [Address Balance Endpoint](#address-balance-endpoin), but sacrifices some response speed in the process.
+The Address Endpoint returns more information about an address' transactions than the [Address Balance Endpoint](#address-balance-endpoint), but sacrifices some response speed in the process.
 
 Resource | Method | Return Object
 -------- | ------ | -------------
@@ -109,3 +109,30 @@ ADDRESS is a *string* representing the public address (or wallet/HD wallet name)
 `738d145faabb1e00cf5a017588a9c0f998318012`
 
 The returned object contains information about the address, including its balance in wei, the number of transactions associated with it, and transaction summaries in descending order by block height.
+
+## Generate Address Endpoint
+
+```shell
+curl -sX POST https://api.blockcypher.com/v1/eth/main/addrs?token=YOURTOKEN
+{
+  "private": "44c984a089184a9a659e10210af360049f366a34f7f3cb253ac5cbfcb33f3d7c",
+  "public": "04b7de9b47fc1fb278648266316dffe47cc7f5280b69b05b5770ad1624ee3da7647c98ade5e4c35b99e606535eaca54db0f913c8aa1fa7226f15b9996325d0989d",
+  "address": "e3f7e628fff7589218d88ae1d6bcdac52fef2168"
+}
+```
+
+The Generate Address endpoint allows you to generate private-public key-pairs along with an associated public address. No information is required with this POST request.
+
+<aside class="success">
+The private key returned is immediately discarded by our servers, but we advise that these keys should not be used for any high-value---or long-term storage---addresses.
+</aside>
+
+<aside class="warning">
+Always use HTTPS for Address Generation requests. Otherwise, your generated private keys will be sent over insecure channels and could be MITM'd.
+</aside>
+
+Resource | Method | Request Object | Return Object
+-------- | ------ | -------------- | -------------
+/addrs | POST | *nil* | [AddressKeychain](#addresskeychain)
+
+The returned object contains a private key, a public key, and a public address, all hex-encoded.
