@@ -12,19 +12,19 @@ If you're new to blockchains, you can think of the blockchain itself as an immut
 curl -s https://api.blockcypher.com/v1/eth/main
 {
   "name": "ETH.main",
-  "height": 1656653,
-  "hash": "c5e3a1df5a295fa536fe2d7f8201f529153753665763e20dd9329659136d0c3c",
-  "time": "2016-06-06T21:53:30.368223984Z",
-  "latest_url": "https://api.blockcypher.com/v1/eth/main/blocks/c5e3a1df5a295fa536fe2d7f8201f529153753665763e20dd9329659136d0c3c",
-  "previous_hash": "781c3b4eb45895cab359a15f6b947c54d6974e9829eaf6937531098107c35e46",
-  "previous_url": "https://api.blockcypher.com/v1/eth/main/blocks/781c3b4eb45895cab359a15f6b947c54d6974e9829eaf6937531098107c35e46",
-  "peer_count": 200,
-  "unconfirmed_count": 11619,
-  "high_fee_per_kb": 40000000000,
-  "medium_fee_per_kb": 20000000000,
-  "low_fee_per_kb": 5000000000,
-  "last_fork_height": 1654102,
-  "last_fork_hash": "7c592f2594eea525754819ed15345a765db0a63e492bac833cb667296c3dee37"
+  "height": 1663350,
+  "hash": "2dc3d6b080fbc78e576c8a0a7ccb52ca2af25b60c0df30ff82279fa41454729c",
+  "time": "2016-06-08T00:46:10.101109766Z",
+  "latest_url": "https://api.blockcypher.com/v1/eth/main/blocks/2dc3d6b080fbc78e576c8a0a7ccb52ca2af25b60c0df30ff82279fa41454729c",
+  "previous_hash": "00709ed44e1ee2f2e5416c1e48bfd1a820e30aa14348b97d802d463f4ec940a6",
+  "previous_url": "https://api.blockcypher.com/v1/eth/main/blocks/00709ed44e1ee2f2e5416c1e48bfd1a820e30aa14348b97d802d463f4ec940a6",
+  "peer_count": 55,
+  "unconfirmed_count": 11924,
+  "high_gas_price": 40000000000,
+  "medium_gas_price": 20000000000,
+  "low_gas_price": 5000000000,
+  "last_fork_height": 1661588,
+  "last_fork_hash": "79075d95aacc6ac50dbdf58da044af396ca97e09cbb31527809579cc96f1c8a7"
 }
 ```
 

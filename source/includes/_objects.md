@@ -22,19 +22,19 @@ Objects sometimes contain <b>attributes</b> that are <b><i>optional.</i></b> The
 curl -s https://api.blockcypher.com/v1/eth/main
 {
   "name": "ETH.main",
-  "height": 1656653,
-  "hash": "c5e3a1df5a295fa536fe2d7f8201f529153753665763e20dd9329659136d0c3c",
-  "time": "2016-06-06T21:53:30.368223984Z",
-  "latest_url": "https://api.blockcypher.com/v1/eth/main/blocks/c5e3a1df5a295fa536fe2d7f8201f529153753665763e20dd9329659136d0c3c",
-  "previous_hash": "781c3b4eb45895cab359a15f6b947c54d6974e9829eaf6937531098107c35e46",
-  "previous_url": "https://api.blockcypher.com/v1/eth/main/blocks/781c3b4eb45895cab359a15f6b947c54d6974e9829eaf6937531098107c35e46",
-  "peer_count": 200,
-  "unconfirmed_count": 11619,
-  "high_fee_per_kb": 40000000000,
-  "medium_fee_per_kb": 20000000000,
-  "low_fee_per_kb": 5000000000,
-  "last_fork_height": 1654102,
-  "last_fork_hash": "7c592f2594eea525754819ed15345a765db0a63e492bac833cb667296c3dee37"
+  "height": 1663099,
+  "hash": "72c4b2773c41cc33fb7f708d1d410d4225706292b795e24e3f6f859927c0b932",
+  "time": "2016-06-07T23:44:03.834909578Z",
+  "latest_url": "https://api.blockcypher.com/v1/eth/main/blocks/72c4b2773c41cc33fb7f708d1d410d4225706292b795e24e3f6f859927c0b932",
+  "previous_hash": "1060a6d4870aed200cb84c83c26203331f433d08f34c13b7de10c400866e43b1",
+  "previous_url": "https://api.blockcypher.com/v1/eth/main/blocks/1060a6d4870aed200cb84c83c26203331f433d08f34c13b7de10c400866e43b1",
+  "peer_count": 83,
+  "unconfirmed_count": 11904,
+  "high_gas_price": 40000000000,
+  "medium_gas_price": 20000000000,
+  "low_gas_price": 5000000000,
+  "last_fork_height": 1661588,
+  "last_fork_hash": "79075d95aacc6ac50dbdf58da044af396ca97e09cbb31527809579cc96f1c8a7"
 }
 ```
 
@@ -50,9 +50,9 @@ Attribute | Type | Description
 **previous_hash** | *string* | The hash of the second-to-latest confirmed block in the blockchain.
 **previous_url** | *url* | The BlockCypher URL to query for more information on the second-to-latest confirmed block; returns a [Block](#block).
 **unconfirmed_count** | *integer* | Number of unconfirmed transactions in memory pool (likely to be included in next block).
-**high_fee_per_kb** | *integer* | A rolling average of the fee (in wei) paid per kilobyte for transactions to be confirmed within 1 to 2 blocks.
-**medium_fee_per_kb** | *integer* | A rolling average of the fee (in wei) paid per kilobyte for transactions to be confirmed within 3 to 6 blocks.
-**low_fee_per_kb** | *integer* | A rolling average of the fee (in wei) paid per kilobyte for transactions to be confirmed in 7 or more blocks.
+**high_gas_price** | *integer* | A rolling average of the gas price (in wei) for transactions to be confirmed within 1 to 2 blocks.
+**medium_gas_price** | *integer* | A rolling average of the gas price (in wei) for transactions to be confirmed within 3 to 6 blocks.
+**low_gas_price** | *integer* | A rolling average of the gas price (in wei) for transactions to be confirmed in 7 or more blocks.
 **last_fork_height** | *integer* | ***Optional*** The current height of the latest fork to the blockchain; when no competing blockchain fork present, not returned with endpoints that return Blockchains.
 **last_fork_hash** | *string* | ***Optional*** The hash of the latest confirmed block in the latest fork of the blockchain; when no competing blockchain fork present, not returned with endpoints that return Blockchains.
 
@@ -132,6 +132,8 @@ curl -s https://api.blockcypher.com/v1/eth/main/txs/8f39fb4940c084460da00a876a52
   "total": 10153153359437326,
   "fees": 1595580000000000,
   "size": 116,
+  "gas_used": 79779,
+  "gas_price": 20000000000,
   "relayed_by": "",
   "confirmed": "2016-05-22T12:43:00Z",
   "received": "2016-05-22T12:43:00Z",
@@ -139,7 +141,7 @@ curl -s https://api.blockcypher.com/v1/eth/main/txs/8f39fb4940c084460da00a876a52
   "double_spend": false,
   "vin_sz": 1,
   "vout_sz": 1,
-  "confirmations": 92614,
+  "confirmations": 99100,
   "confidence": 1,
   "inputs": [
     {
@@ -169,8 +171,10 @@ Attribute | Type | Description
 **hash** | *string* | The hash of the transaction. 
 **addresses** | *array[string]* | Array of Ethereum addresses involved in the transaction.
 **total** | *integer* | The total number of wei exchanged in this transaction.
-**fees** | *integer* | The total number of fees---in wei---collected by miners in this transaction.
+**fees** | *integer* | The total number of fees---in wei---collected by miners in this transaction. Equal to **gas_price** * **gas_used**.
 **size** | *integer* | The size of the transaction in bytes.
+**gas_used** | *integer* | The amount of gas used by this transaction.
+**gas_price** | *integer* | The price of gas---in wei---in this transaction.
 **relayed_by** | *string* | Address of the peer that sent BlockCypher's servers this transaction. May be empty.
 **received** | [*time*](https://tools.ietf.org/html/rfc3339) | Time this transaction was received by BlockCypher's servers.
 **ver** | *integer* | Version number of this transaction.
@@ -181,6 +185,7 @@ Attribute | Type | Description
 **inputs** | *Object* | An array object containing a single input with a **sequence** number (used as a nonce for account balances) and an Ethereum account **address**. Only contains one input in the array; we still use an array to maintain parity with the Bitcoin API.
 **outputs** | *Object* | An array object containing a single output with **value** (in wei), **script**, and an Ethereum account **address**. Only contains one output in the array; we still use an array to maintain parity with the Bitcoin API.
 **confirmed** | [*time*](https://tools.ietf.org/html/rfc3339) | ***Optional*** Time at which transaction was included in a block; only present for confirmed transactions.
+**contract_creation** | *bool* | ***Optional*** If true, this transaction was used to create a contract and contract account. Note that the contract address (in the **outputs** field) will be blank until the transaction is confirmed.
 **receive_count** | *integer* | ***Optional*** Number of peers that have sent this transaction to BlockCypher; only present for unconfirmed transactions.
 **block_hash** | *string* | ***Optional***  Hash of the block that contains this transaction; only present for confirmed transactions.
 **double_of** | *string* | ***Optional*** If this transaction is a double-spend (i.e. **double_spend** == *true*) then this is the hash of the transaction it's double-spending.
