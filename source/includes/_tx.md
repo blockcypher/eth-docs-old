@@ -147,3 +147,163 @@ Resource | Method | Return Object
 /txs | GET | Array[[TX](#TX)]
 
 The returned object is an array of transactions that haven't been included in blocks, arranged in reverse chronological order (latest is first, then older transactions follow).
+
+## Creating Transactions
+
+Using BlockCypher's API, you can push transactions to Ethereum in one of two ways:
+
+- Use another Ethereum library to create your transactions, then [push them using our raw-transaction-endpoint](#push-raw-transaction-endpoint)
+- Use our two-endpoint process outlined below, wherein we generate a [TXSkeleton](#txskeleton) based on your input address, output address, and value to transfer.
+
+In either case, for security reasons, we never take possession of your private keys. 
+
+<aside class="warning">
+Always use HTTPS for creating and pushing transactions.
+</aside>
+
+```shell
+curl -sd '{"inputs":[{"addresses": ["add42af7dd58b27e1e6ca5c4fdc01214b52d382f"]}],"outputs":[{"addresses": ["884bae20ee442a1d53a1d44b1067af42f896e541"], "value": 4200000000000000}]}' https://api.blockcypher.com/v1/eth/main/txs/new?token=YOURTOKEN
+
+{
+  "tx": {
+    "block_height": -1,
+    "block_index": 0,
+    "hash": "9403244c6bcfe4063e7fb33138b02881d7a72ccdbd9c04d9abdff2b432d67ada",
+    "addresses": [
+      "add42af7dd58b27e1e6ca5c4fdc01214b52d382f",
+      "884bae20ee442a1d53a1d44b1067af42f896e541"
+    ],
+    "total": 4200000000000000,
+    "fees": 861000000000000,
+    "size": 44,
+    "gas_used": 0,
+    "gas_price": 41000000000,
+    "relayed_by": "",
+    "received": "2016-06-08T01:32:35.573921633Z",
+    "ver": 0,
+    "double_spend": false,
+    "vin_sz": 1,
+    "vout_sz": 1,
+    "inputs": [
+      {
+        "sequence": 0,
+        "addresses": [
+          "add42af7dd58b27e1e6ca5c4fdc01214b52d382f"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "value": 4200000000000000,
+        "addresses": [
+          "884bae20ee442a1d53a1d44b1067af42f896e541"
+        ]
+      }
+    ]
+  },
+  "tosign": [
+    "a83f5bea598e0d217a03a2646d6c49edb2e99daf4537b2c09b008df76b77acec"
+  ]
+}
+```
+
+### New Transaction Endpoint
+
+To use BlockCypher's two-endpoint transaction creation tool, first you need to provide the input address, output address, and value to transfer (in wei). Provide this in a partially-filled out [TX](#tx) request object.
+
+Resource | Method | Request Object | Return Object
+-------- | ------ | -------------- | -------------
+/txs/new | POST | [TX](#tx) | [TXSkeleton](#txskeleton)
+
+As you can see from the code example, you only need to provide a single public address within the **addresses** array of both the **input** and **output** of your [TX](#tx) request object. You also need to fill in the **value** with the amount you'd like to transfer from one address to another. Note that we only accept a single input and output **address** per Ethereum's transaction model, and **tosign** only returns a single element in its array; we use arrays for parity with our Bitcoin API.
+
+As a return object, you'll receive a [TXSkeleton](#txskeleton) containing a slightly-more complete [TX](#tx) alongside data you need to sign in the **tosign** array. You'll need this object for the next steps of the transaction creation process.
+
+<aside class="warning">
+The <a href="#txskeleton">TXSkeleton</a> returned by this endpoint may contain some data that's temporary or incomplete, like the <b>hash</b>, and the <b>gas used</b> fields. This is by design, as the final <a href="#tx">TX</a> can only be computed once signed data has been added. Do not rely on these fields until they are returned and sent to the network via the Send Transaction Endpoint outlined below.
+</aside>
+
+
+```shell
+# next, you sign the data returned in the tosign array locally
+# here we're using our signer tool (https://github.com/blockcypher/btcutils/tree/master/signer), but any ECDSA secp256k1 signing tool should work (Ethereum uses the same ECDSA curve as Bitcoin for transaction signatures)
+# $PRIVATEKEY here is a hex-encoded private key corresponding to the input from address add42af7dd58b27e1e6ca5c4fdc01214b52d382f
+
+./signer a83f5bea598e0d217a03a2646d6c49edb2e99daf4537b2c09b008df76b77acec $PRIVATEKEY 
+3045022100bc04ce017622f9830f955dbd8fafb65c5a72306a674711e507200f5f198954c90220581bc05e2658c258a985d914a158f89f44144a2e082837955b218d12a43a6a38
+```
+### Locally Sign Your Transaction
+
+With your [TXSkeleton](#txskeleton) returned from the New Transaction Endpoint, you now need to use your private key to sign the data provided in the **tosign** array.
+
+Digital signing can be a difficult process, and is where the majority of issues arise when dealing with cryptocurrency transactions. Ethereum uses the same elliptic curve as Bitcoin (secp256k1), so any Bitcoin signing library that fits with your workflow should suffice. If you want to experiment with client-side signing, consider using our [signer tool](https://github.com/blockcypher/btcutils/tree/master/signer).
+
+<aside class="notice">
+One of the most common errors in the signing process is a data format mismatch. We always return and expect hex-encoded data, but oftentimes, standard signing libraries require byte arrays. Remember to convert your data, and always send hex-encoded signatures to BlockCypher.
+</aside>
+
+```shell
+# the request body is truncated because it's huge, but it's the same as the returned object from above plus the signature
+curl -sd '{"tx": {...}, "tosign": [ "a83f5bea598e0d217a03a2646d6c49edb2e99daf4537b2c09b008df76b77acec" ], "signatures": [ "3045022100bc04ce017622f9830f955dbd8fafb65c5a72306a674711e507200f5f198954c90220581bc05e2658c258a985d914a158f89f44144a2e082837955b218d12a43a6a38" ]}' https://api.blockcypher.com/v1/eth/main/txs/send?token=YOURTOKEN
+
+{
+  "tx": {
+    "block_height": -1,
+    "block_index": 0,
+    "hash": "85725e97d83ec7ce3888ca74d68b7820640f80d6380b9e1c565f61f5409acf50",
+    "addresses": [
+      "add42af7dd58b27e1e6ca5c4fdc01214b52d382f",
+      "884bae20ee442a1d53a1d44b1067af42f896e541"
+    ],
+    "total": 4200000000000000,
+    "fees": 861000000000000,
+    "size": 109,
+    "gas_used": 0,
+    "gas_price": 41000000000,
+    "relayed_by": "",
+    "received": "2016-06-08T02:38:59.691331763Z",
+    "ver": 0,
+    "double_spend": false,
+    "vin_sz": 1,
+    "vout_sz": 1,
+    "inputs": [
+      {
+        "sequence": 0,
+        "addresses": [
+          "add42af7dd58b27e1e6ca5c4fdc01214b52d382f"
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "value": 4200000000000000,
+        "addresses": [
+          "884bae20ee442a1d53a1d44b1067af42f896e541"
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Send Transaction Endpoint
+
+Once you've finished signing the **tosign** data locally, put that (hex-encoded) data into the **signatures** array of the [TXSkeleton](#txskeleton). Unlike Bitcoin, you don't need to include the signing accounts public key, as on Ethereum this is derived using the **tosign** data and **signature** data. But you must include the **tosign** data in addition to the **signatures** array for that derivation to work.
+
+Resource | Method | Request Object | Return Object
+-------- | ------ | -------------- | -------------
+/txs/send | POST | [TXSkeleton](#txskeleton) | [TXSkeleton](#txskeleton)
+
+If the transaction was successful, you'll receive a [TXSkeleton](#TXskeleton) with the completed [TX](#tx) (which contains its final **hash**) and an HTTP Status Code 201.
+
+## Push Raw Transaction Endpoint
+
+```shell
+curl todo
+```
+
+## Decode Raw Transaction Endpoint
+
+```shell
+curl todo
+```
