@@ -296,14 +296,111 @@ Resource | Method | Request Object | Return Object
 
 If the transaction was successful, you'll receive a [TXSkeleton](#TXskeleton) with the completed [TX](#tx) (which contains its final **hash**) and an HTTP Status Code 201.
 
-## Push Raw Transaction Endpoint
-
-```shell
-curl todo
-```
-
 ## Decode Raw Transaction Endpoint
 
 ```shell
-curl todo
+curl -sd '{"tx":"f86b808504e3b2920082520894add42af7dd58b27e1e6ca5c4fdc01214b52d382f870bdccd84e7b000801ba0b86360f1c2d2b38421a80e71bf4cf54371bc9aa62f81c925484c6557b44b13f1a07b5690150c10a3947225fb612162c90ccfaefde99f7d363a8013e3eead0e55dd"}' https://api.blockcypher.com/v1/eth/main/txs/decode?token=YOURTOKEN
+{
+  "block_height": -1,
+  "block_index": 0,
+  "hash": "a88cca4dd97e028d7199028888156c4dad9936a2cbdfe8262fb12a252e16d4f1",
+  "addresses": [
+    "7ea7eb1c8b0fba77964c561f9b7494a87534aa15",
+    "add42af7dd58b27e1e6ca5c4fdc01214b52d382f"
+  ],
+  "total": 3339000000000000,
+  "fees": 441000000000000,
+  "size": 109,
+  "gas_used": 0,
+  "gas_price": 21000000000,
+  "relayed_by": "54.213.170.147",
+  "received": "2016-06-08T06:18:08.181893896Z",
+  "ver": 0,
+  "double_spend": false,
+  "vin_sz": 1,
+  "vout_sz": 1,
+  "confirmations": 0,
+  "inputs": [
+    {
+      "sequence": 0,
+      "addresses": [
+        "7ea7eb1c8b0fba77964c561f9b7494a87534aa15"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "value": 3339000000000000,
+      "addresses": [
+        "add42af7dd58b27e1e6ca5c4fdc01214b52d382f"
+      ]
+    }
+  ]
+}
 ```
+We also offer the ability to decode raw transactions without sending propagating them to the network; perhaps you want to double-check another client library or confirm that another service is sending proper transactions. 
+
+Resource | Method | Request Object | Return Object
+-------- | ------ | -------------- | -------------
+/txs/decode | POST | {"tx":$TXHEX} | [TX](#tx)
+
+$TXHEX is a hex-encoded raw representation of your transaction, for example:
+
+`f86b808504e3b2920082520894add42af7dd58b27e1e6ca5c4fdc01214b52d382f870bdccd84e7b000801ba0b86360f1c2d2b38421a80e71bf4cf54371bc9aa62f81c925484c6557b44b13f1a07b5690150c10a3947225fb612162c90ccfaefde99f7d363a8013e3eead0e55dd`
+
+If it succeeds, you'll receive your decoded [TX](#tx) object.
+
+## Push Raw Transaction Endpoint
+
+```shell
+curl -sd '{"tx":"f86b808504e3b2920082520894add42af7dd58b27e1e6ca5c4fdc01214b52d382f870bdccd84e7b000801ba0b86360f1c2d2b38421a80e71bf4cf54371bc9aa62f81c925484c6557b44b13f1a07b5690150c10a3947225fb612162c90ccfaefde99f7d363a8013e3eead0e55dd"}' https://api.blockcypher.com/v1/eth/main/txs/push?token=YOURTOKEN
+{
+  "block_height": -1,
+  "block_index": 0,
+  "hash": "a88cca4dd97e028d7199028888156c4dad9936a2cbdfe8262fb12a252e16d4f1",
+  "addresses": [
+    "7ea7eb1c8b0fba77964c561f9b7494a87534aa15",
+    "add42af7dd58b27e1e6ca5c4fdc01214b52d382f"
+  ],
+  "total": 3339000000000000,
+  "fees": 441000000000000,
+  "size": 109,
+  "gas_used": 0,
+  "gas_price": 21000000000,
+  "relayed_by": "54.213.170.147",
+  "received": "2016-06-08T06:18:08.181893896Z",
+  "ver": 0,
+  "double_spend": false,
+  "vin_sz": 1,
+  "vout_sz": 1,
+  "confirmations": 0,
+  "inputs": [
+    {
+      "sequence": 0,
+      "addresses": [
+        "7ea7eb1c8b0fba77964c561f9b7494a87534aa15"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "value": 3339000000000000,
+      "addresses": [
+        "add42af7dd58b27e1e6ca5c4fdc01214b52d382f"
+      ]
+    }
+  ]
+}
+```
+
+If you'd prefer to use your own transaction library instead of the recommended path of our two-endpoint [transaction generation](#creating-transactions) we're still happy to help you propagate your raw transactions. Simply send your raw hex-encoded transaction to this endpoint and we'll leverage our well-connected network to propagate your transaction faster than anywhere else.
+
+Resource | Method | Request Object | Return Object
+-------- | ------ | -------------- | -------------
+/txs/push | POST | {"tx":$TXHEX} | [TX](#tx)
+
+$TXHEX is a hex-encoded raw representation of your transaction, for example:
+
+`f86b808504e3b2920082520894add42af7dd58b27e1e6ca5c4fdc01214b52d382f870bdccd84e7b000801ba0b86360f1c2d2b38421a80e71bf4cf54371bc9aa62f81c925484c6557b44b13f1a07b5690150c10a3947225fb612162c90ccfaefde99f7d363a8013e3eead0e55dd`
+
+If it succeeds, you'll receive a decoded [TX](#tx) object and an HTTP Status Code 201. You can then use the **hash** to track its progress on the network.
