@@ -368,3 +368,30 @@ Attribute | Type | Description
 **address**	| *string* | Standard address representation.
 **public** | *string* | Hex-encoded Public key.
 **private**	| *string* | Hex-encoded Private key.
+
+## Event
+
+```shell
+curl -s https://api.blockcypher.com/v1/eth/main/hooks/ce83d08f-7b86-4a6a-9b41-85507648f9c7?token=YOURTOKEN
+{
+  "id": "ce83d08f-7b86-4a6a-9b41-85507648f9c7",
+  "token": "YOURTOKEN",
+  "url": "https://my.domain.com/callbacks/new-tx",
+  "callback_errors": 0,
+  "address": "c5beef03aaa9548210b5550a62f7756efaa08ba3",
+  "event": "unconfirmed-tx",
+  "filter": "addr=c5beef03aaa9548210b5550a62f7756efaa08ba3\u0026event=unconfirmed-tx"
+}
+```
+
+An Event represents a WebHooks or WebSockets-based notification request, as detailed in the [Events & Hooks](#events-and-hooks) section of the documentation.
+
+Attribute | Type | Description
+--------- | ---- | -----------
+**id** | *string* | Identifier of the event; generated when a new request is created.
+**event** | *string* | Type of event; can be *unconfirmed-tx*, *new-block*, *confirmed-tx*, *tx-confirmation*, *double-spend-tx*.
+**hash**	| *string* | ***optional*** Only objects with a matching hash will be sent. The hash can either be for a block or a transaction.
+**address**	| *string* | ***optional*** Only transactions associated with the given address will be sent. 
+**confirmations** | *integer* | ***optional***  Used in concert with the *tx-confirmation* event type to set the number of confirmations desired for which to receive an update. You'll receive an updated [TX](#tx) for every confirmation up to this amount. The maximum allowed is 10; if not set, it will default to 6.
+**url** | *url* | ***optional*** Callback URL for this Event's WebHook; not applicable for WebSockets usage.
+**callback_errors** | *int* | Number of errors when attempting to POST to callback URL; not applicable for WebSockets usage.
