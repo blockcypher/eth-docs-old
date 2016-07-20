@@ -13,6 +13,7 @@ includes:
   - blockchain
   - address
   - tx
+  - contracts
   - events
 ---
 
