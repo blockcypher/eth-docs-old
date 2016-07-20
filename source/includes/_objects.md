@@ -405,7 +405,7 @@ Attribute | Type | Description
 **gas_amount** | *int* | Amount of gas to use in contract creation or method execution.
 **name** | *string* | Name of contract as published.
 **bin** | *string* | Hex-encoded binary compilation of this contract.
-**abi** | [ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI) |  JSON-encoded ABI. Only returned with contracts initially compiled by BlockCypher.
+**abi** | *[ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI)* |  JSON-encoded ABI. Only returned with contracts initially compiled by BlockCypher.
 **address** | *string* | Hex-encoded address of this contract.
 **created** | *[time](https://tools.ietf.org/html/rfc3339)* | Timestamp when this contract was confirmed in the Ethereum blockchain.
 **creation_tx_hash** | *string* | Hex-encoded transaction hash that created this contract.
