@@ -2,11 +2,13 @@
 
 Compared to other blockchains, contracts lie at the heart of Ethereum's unique value proposition. Contracts can be expressively programmed in languages like [Solidity](https://solidity.readthedocs.io/en/latest/); if you're not familiar with Ethereum's contract language you should definitely start there.
 
-<aside class="warning">
-With great power comes great responsibility; in other words, it's easier to shoot yourself in the foot with Ethereum. Don't <a href="https://en.wikipedia.org/wiki/Decentralized_autonomous_organization#Security">The DAO it.</a> Follow best <a href="https://github.com/ethereum/wiki/wiki/Safety">security and safety practices</a> when coding your smart contracts.
-</aside>
+We offer a number of API endpoints that significantly simplify contract creation and method calling. Via the methods below, you can embed new contracts into the Ethereum blockchain, check their code and ABI, and initiate contract methods and execution. Essentially, we provide a _JSON/HTTP binding for your Ethereum contracts_.
 
-We offer a number of API endpoints that significantly simplify contract creation and method calling. Via the methods below, you can embed new contracts into the Ethereum blockchain, check their contents, and initiate contract methods and execution.
+With great power comes great responsibility; in other words, it's easier to shoot yourself in the foot with Ethereum. Don't <a href="https://en.wikipedia.org/wiki/Decentralized_autonomous_organization#Security">The DAO it.</a> Follow best <a href="https://github.com/ethereum/wiki/wiki/Safety">security and safety practices</a> when coding your smart contracts.
+
+<aside class="warning">
+Several of the requests below need a private key to pay for contract gas. We feel this is an acceptable security tradeoff to make the API much easier to use, given that for development you don't need a lot of money to push and call contracts. Just keep a minimal amount of ether on your development key, and if you need to fund your contract with more ether, use a different key (and keep it safe).
+</aside>
 
 ## Create Contract Endpoint
 
@@ -202,9 +204,13 @@ curl -s https://api.blockcypher.com/v1/eth/main/txs/61474003e56d67aba6bf148c5ec3
 }
 ```
 
-The Create Contract Endpoint allows you to submit your **solidity** code and **params** to check raw serialized binary compilation and [ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI).
+The Create Contract Endpoint allows you to submit your **solidity** code and **params** to check raw serialized binary compilation and [ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI). It's an easy to validate your contract compiles before pushing it to the Ethereum blockchain.
 
-If you include a **private** key (associated with a funded Ethereum external account), **gas_amount**, and contract(s) to **publish**, BlockCypher will embed the contract into the blockchain and return the transaction hash that created the contract and the contract address.
+If you include a **private** key (associated with a funded Ethereum external account), **gas_amount**, and contract(s) to **publish**, BlockCypher will embed the contract into the blockchain and return the transaction hash that created the contract and the contract address. Find both of those properties under the returned contract object as **address** and **creation_tx_hash**.
+
+The **params** property lets you provide arguments to the contract constructor. If your contract has no constructor or the constructor takes no arguments, this property can be omitted.
+
+Note that for now both the contract solidity source and the ABI are made publicly available for anyone with the contract hash. We will support making the source private to your token in the future. However note that all contracts on the public Ethereum blockchain can be seen in binary form and it's only a matter of time before good decompilers surface.
 
 Resource | Method | Request Object | Return Object
 -------- | ------ | -------------- | -------------
@@ -234,7 +240,7 @@ ADDRESS is a *string* representing the contract address you're interested in que
 
 `0eb688e79698d645df015cf2e9db5a6fe16357f1`
 
-The returned object contains information the contract; if you deployed the contract with BlockCypher, it will return **solidity** and **abi** as well.
+The returned object contains information about the contract; if you deployed the contract with BlockCypher, it will return **solidity** and **abi** as well.
 
 ## Call Contract Method Endpoint
 
@@ -272,7 +278,9 @@ curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e7
 }
 ```
 
-Using the Call Contract Method Endpoint, you can even invoke a particular contract's method. To do so, you must include a **private** key associated with a funded external account and a specified **gas_amount** in your request object. **params** are optionally accepted if the contract method allows them.
+Using the Call Contract Method Endpoint, you can even invoke a particular contract's method. To do so, you must include a **private** key associated with a funded external account and a specified **gas_amount** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.).
+
+The Call Contract endpoint will check the contract ABI to determine whether the method has been declared "constant". If so, no transaction will be created and no gas will be consumed. The method is just called locally on our servers and won't be registered on the blockchain. Otherwise, we will build the call transaction to invoke the method on the Ethereum blockchain and propagate it on the network. Keep in mind that in that case, you will need to wait for the call transaction to be included in a block to see its effects.
 
 Resource | Method | Request Object | Return Object
 -------- | ------ | -------------- | -------------
