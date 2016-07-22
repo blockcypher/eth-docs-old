@@ -278,7 +278,9 @@ curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e7
 }
 ```
 
-Using the Call Contract Method Endpoint, you can even invoke a particular contract's method. To do so, you must include a **private** key associated with a funded external account and a specified **gas_amount** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.).
+The Call Contract Method endpoint makes every method in your contracts callable simply via an HTTP request. It's a binding that translates a published contract into a set of endpoints (one for each method) and a provided JSON array into a set of arguments to invoke a given method.
+
+To call a method on a given contract, you must include a **private** key associated with a funded external account and a specified **gas_amount** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.).
 
 The Call Contract endpoint will check the contract ABI to determine whether the method has been declared "constant". If so, no transaction will be created and no gas will be consumed. The method is just called locally on our servers and won't be registered on the blockchain. Otherwise, we will build the call transaction to invoke the method on the Ethereum blockchain and propagate it on the network. Keep in mind that in that case, you will need to wait for the call transaction to be included in a block to see its effects.
 
