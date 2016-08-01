@@ -185,6 +185,7 @@ Attribute | Type | Description
 **inputs** | *Object* | An array object containing a single input with a **sequence** number (used as a nonce for account balances) and an Ethereum account **address**. Only contains one input in the array; we still use an array to maintain parity with the Bitcoin API.
 **outputs** | *Object* | An array object containing a single output with **value** (in wei), **script**, and an Ethereum account **address**. Only contains one output in the array; we still use an array to maintain parity with the Bitcoin API.
 **confirmed** | [*time*](https://tools.ietf.org/html/rfc3339) | ***Optional*** Time at which transaction was included in a block; only present for confirmed transactions.
+**gas_limit** | *integer* | ***Optional*** If creating a transaction, can optionally set a higher default gas limit (useful if your recepient is a contract). If not set, default is 21000 gas for external accounts and 80000 for contract accounts.
 **contract_creation** | *bool* | ***Optional*** If true, this transaction was used to create a contract and contract account. Note that the contract address (in the **outputs** field) will be blank until the transaction is confirmed.
 **receive_count** | *integer* | ***Optional*** Number of peers that have sent this transaction to BlockCypher; only present for unconfirmed transactions.
 **block_hash** | *string* | ***Optional***  Hash of the block that contains this transaction; only present for confirmed transactions.
@@ -377,7 +378,7 @@ Attribute | Type | Description
 "params": ["Hello BlockCypher Test"],
 "publish": ["greeter"],
 "private": "3ca40...",
-"gas_amount": 500000
+"gas_limit": 500000
 }
 
 {
@@ -385,7 +386,7 @@ Attribute | Type | Description
 "solidity": "contract mortal {\n  /* Define variable owner of the type address*/\n    address owner;\n    /* this function is executed at initialization and sets the owner of the contract */\n    function mortal() { owner = msg.sender; }\n    /* Function to recover the funds on the contract */\n    function kill() { if (msg.sender == owner) suicide(owner); }\n}\n\ncontract greeter is mortal {\n    /* define variable greeting of the type string */\n    string greeting;\n    /* this runs when the contract is executed */\n    function greeter(string _greeting) public {\n        greeting = _greeting;\n    }\n    /* main function */\n    function greet() constant returns (string) {\n        return greeting;\n    }\n}",
 "bin": "606060405260405161023e38038061023e8339810160405280510160008054600160a060020a031916331790558060016000509080519060200190828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f10609f57805160ff19168380011785555b50608e9291505b8082111560cc57600081558301607d565b50505061016e806100d06000396000f35b828001600101855582156076579182015b82811115607657825182600050559160200191906001019060b0565b509056606060405260e060020a600035046341c0e1b58114610026578063cfae321714610068575b005b6100246000543373ffffffffffffffffffffffffffffffffffffffff908116911614156101375760005473ffffffffffffffffffffffffffffffffffffffff16ff5b6100c9600060609081526001805460a06020601f6002600019610100868816150201909416939093049283018190040281016040526080828152929190828280156101645780601f1061013957610100808354040283529160200191610164565b60405180806020018281038252838181518152602001915080519060200190808383829060006004602084601f0104600f02600301f150905090810190601f1680156101295780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b565b820191906000526020600020905b81548152906001019060200180831161014757829003601f168201915b505050505090509056",
 "abi": [...],
-"gas_amount": 500000,
+"gas_limit": 500000,
 "creation_tx_hash": "61474003e56d67aba6bf148c5ec361e3a3c1ceea37fe3ace7d87759b399292f9",
 "address": "0eb688e79698d645df015cf2e9db5a6fe16357f1",
 "params": [
@@ -402,7 +403,7 @@ Attribute | Type | Description
 **params** | Array[*string*] | Parameters for either contract creation or method execution.
 **publish** | Array[*string*] | Named contract(s) to publish; necessary to specify when first [creating a contract](#create-contract-endpoint).
 **private** | *string* | Private key associated with a funded Ethereum external account used to publish a contract or execute a method.
-**gas_amount** | *int* | Amount of gas to use in contract creation or method execution.
+**gas_limit** | *int* | Maximum amount of gas to use in contract creation or method execution.
 **name** | *string* | Name of contract as published.
 **bin** | *string* | Hex-encoded binary compilation of this contract.
 **abi** | *[ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI)* |  JSON-encoded ABI. Only returned with contracts initially compiled by BlockCypher.

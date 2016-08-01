@@ -90,7 +90,7 @@ cat publishGreeter.json
   "params": ["Hello BlockCypher Test"],
   "publish": ["greeter"],
   "private": "3ca40...",
-  "gas_amount": 500000
+  "gas_limit": 500000
 }
 curl -d @publishGreeter.json https://api.blockcypher.com/v1/eth/main/contracts?token=YOURTOKEN
 [
@@ -128,7 +128,7 @@ curl -d @publishGreeter.json https://api.blockcypher.com/v1/eth/main/contracts?t
         "type": "constructor"
       }
     ],
-    "gas_amount": 500000,
+    "gas_limit": 500000,
     "creation_tx_hash": "61474003e56d67aba6bf148c5ec361e3a3c1ceea37fe3ace7d87759b399292f9",
     "address": "0eb688e79698d645df015cf2e9db5a6fe16357f1",
     "params": [
@@ -152,7 +152,7 @@ curl -d @publishGreeter.json https://api.blockcypher.com/v1/eth/main/contracts?t
         "type": "constructor"
       }
     ],
-    "gas_amount": 500000,
+    "gas_limit": 500000,
     "params": [
       "Hello BlockCypher Test"
     ]
@@ -206,7 +206,7 @@ curl -s https://api.blockcypher.com/v1/eth/main/txs/61474003e56d67aba6bf148c5ec3
 
 The Create Contract Endpoint allows you to submit your **solidity** code and **params** to check raw serialized binary compilation and [ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI). It's an easy to validate your contract compiles before pushing it to the Ethereum blockchain.
 
-If you include a **private** key (associated with a funded Ethereum external account), **gas_amount**, and contract(s) to **publish**, BlockCypher will embed the contract into the blockchain and return the transaction hash that created the contract and the contract address. Find both of those properties under the returned contract object as **address** and **creation_tx_hash**.
+If you include a **private** key (associated with a funded Ethereum external account), **gas_limit**, and contract(s) to **publish**, BlockCypher will embed the contract into the blockchain and return the transaction hash that created the contract and the contract address. Find both of those properties under the returned contract object as **address** and **creation_tx_hash**.
 
 The **params** property lets you provide arguments to the contract constructor. If your contract has no constructor or the constructor takes no arguments, this property can be omitted.
 
@@ -249,11 +249,11 @@ The returned object contains information about the contract; if you deployed the
 cat call.json
 {
 	"private": "3ca40...",
-	"gas_amount": 20000 
+	"gas_limit": 20000 
 }
 curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e79698d645df015cf2e9db5a6fe16357f1/greet?token=YOURTOKEN
 {
-  "gas_amount": 20000,
+  "gas_limit": 20000,
   "address": "0eb688e79698d645df015cf2e9db5a6fe16357f1",
   "results": [
     "Hello BlockCypher Test"
@@ -268,11 +268,11 @@ curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e7
 cat call.json
 {
 	"private": "3ca40...",
-	"gas_amount": 100000 
+	"gas_limit": 100000 
 }
 curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e79698d645df015cf2e9db5a6fe16357f1/kill?token=YOURTOKEN
 {
-  "gas_amount": 100000,
+  "gas_limit": 100000,
   "call_tx_hash": "42dc5862aeedf1001db37c404c8dc922918167589aba1e0b19c6a9372eedb294",
   "address": "0eb688e79698d645df015cf2e9db5a6fe16357f1"
 }
@@ -280,7 +280,7 @@ curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e7
 
 The Call Contract Method endpoint makes every method in your contracts callable simply via an HTTP request. It's a binding that translates a published contract into a set of endpoints (one for each method) and a provided JSON array into a set of arguments to invoke a given method.
 
-To call a method on a given contract, you must include a **private** key associated with a funded external account and a specified **gas_amount** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.).
+To call a method on a given contract, you must include a **private** key associated with a funded external account and a specified **gas_limit** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.).
 
 The Call Contract endpoint will check the contract ABI to determine whether the method has been declared "constant". If so, no transaction will be created and no gas will be consumed. The method is just called locally on our servers and won't be registered on the blockchain. Otherwise, we will build the call transaction to invoke the method on the Ethereum blockchain and propagate it on the network. Keep in mind that in that case, you will need to wait for the call transaction to be included in a block to see its effects.
 

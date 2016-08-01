@@ -217,6 +217,10 @@ Resource | Method | Request Object | Return Object
 
 As you can see from the code example, you only need to provide a single public address within the **addresses** array of both the **input** and **output** of your [TX](#tx) request object. You also need to fill in the **value** with the amount you'd like to transfer from one address to another. Note that we only accept a single input and output **address** per Ethereum's transaction model, and **tosign** only returns a single element in its array; we use arrays for parity with our Bitcoin API.
 
+<aside class="notice">
+By default, creating a transaction that sends to an external account sets the <strong>gas_limit</strong> to 21000. For contract account recepients, that limit is raised to 80000. If you'd like to set a custom limit, add <strong>gas_limit</strong> to your request object.
+</aside>
+
 As a return object, you'll receive a [TXSkeleton](#txskeleton) containing a slightly-more complete [TX](#tx) alongside data you need to sign in the **tosign** array. You'll need this object for the next steps of the transaction creation process.
 
 <aside class="warning">
