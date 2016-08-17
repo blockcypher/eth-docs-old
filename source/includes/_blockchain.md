@@ -34,7 +34,7 @@ Resource | Method | Return Object
 -------- | ------ | -------------
 / | GET | [Blockchain](#blockchain)
 
-The returned object contains a litany of information, including its height, the time/hash of the latest block, and more.
+The returned object contains a litany of information, including its height, the time/hash of the latest block, and more. For Ethereum, the object includes information on gas_price, denoted in wei. Unlike Bitcoin, fees are determined by the computational execution cost of the transaction via gas; in order to prevent runaway contract execution, each operation in Ethereum's Virtual Machine requires a fixed/known amount of gas. While the amount of gas is fixed for a given EVM operation, the price of gas fluctuates based on market demand on the Ethereum blockchain (similar to Bitcoin fees). For more detail, check this [very helpful Stack Exchange explanation](https://ethereum.stackexchange.com/questions/3/what-is-meant-by-the-term-gas).
 
 For more detailed information about the data returned, check the [Blockchain](#blockchain) object.
 

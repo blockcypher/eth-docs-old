@@ -190,6 +190,7 @@ Attribute | Type | Description
 **receive_count** | *integer* | ***Optional*** Number of peers that have sent this transaction to BlockCypher; only present for unconfirmed transactions.
 **block_hash** | *string* | ***Optional***  Hash of the block that contains this transaction; only present for confirmed transactions.
 **double_of** | *string* | ***Optional*** If this transaction is a double-spend (i.e. **double_spend** == *true*) then this is the hash of the transaction it's double-spending.
+**execution_error** | *string* | ***Optional*** If this transaction has an execution error, then this field will be included (e.g. "out of gas").
 
 ## TXRef
 
