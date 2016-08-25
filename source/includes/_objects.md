@@ -184,11 +184,14 @@ Attribute | Type | Description
 **confirmations** | *integer* | Number of subsequent blocks, including the block the transaction is in. Unconfirmed transactions have 0 confirmations.
 **inputs** | *Object* | An array object containing a single input with a **sequence** number (used as a nonce for account balances) and an Ethereum account **address**. Only contains one input in the array; we still use an array to maintain parity with the Bitcoin API.
 **outputs** | *Object* | An array object containing a single output with **value** (in wei), **script**, and an Ethereum account **address**. Only contains one output in the array; we still use an array to maintain parity with the Bitcoin API.
+**internal_txids** | *array[string]* | ***Optional*** If this transaction executed a contract which propagated its own subsequent transactions, then this array will be present, containing the hashes of those subsequent internal transactions.
+**parent_tx** | *string* | ***Optional*** If this transaction was initiated by a contract, this field will be present, conveying the hash of the parent transaction that executed the contract resulting in this transaction (the inverse of an **internal_txids** hash).
 **confirmed** | [*time*](https://tools.ietf.org/html/rfc3339) | ***Optional*** Time at which transaction was included in a block; only present for confirmed transactions.
 **gas_limit** | *integer* | ***Optional*** If creating a transaction, can optionally set a higher default gas limit (useful if your recepient is a contract). If not set, default is 21000 gas for external accounts and 80000 for contract accounts.
 **contract_creation** | *bool* | ***Optional*** If true, this transaction was used to create a contract and contract account. Note that the contract address (in the **outputs** field) will be blank until the transaction is confirmed.
 **receive_count** | *integer* | ***Optional*** Number of peers that have sent this transaction to BlockCypher; only present for unconfirmed transactions.
 **block_hash** | *string* | ***Optional***  Hash of the block that contains this transaction; only present for confirmed transactions.
+**block_index** | *integer* | ***Optional*** Canonical, zero-indexed location of this transaction in a block; only present for confirmed transactions.
 **double_of** | *string* | ***Optional*** If this transaction is a double-spend (i.e. **double_spend** == *true*) then this is the hash of the transaction it's double-spending.
 **execution_error** | *string* | ***Optional*** If this transaction has an execution error, then this field will be included (e.g. "out of gas").
 
