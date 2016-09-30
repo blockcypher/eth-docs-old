@@ -408,6 +408,7 @@ Attribute | Type | Description
 **publish** | Array[*string*] | Named contract(s) to publish; necessary to specify when first [creating a contract](#create-contract-endpoint).
 **private** | *string* | Private key associated with a funded Ethereum external account used to publish a contract or execute a method.
 **gas_limit** | *int* | Maximum amount of gas to use in contract creation or method execution.
+**value** | *int* | Amount (in wei) to transfer; can be used when [creating a contract](#creat-contract-endpoint) or [calling a method.](#call-contract-method-endpoint)
 **name** | *string* | Name of contract as published.
 **bin** | *string* | Hex-encoded binary compilation of this contract.
 **abi** | *[ABI](https://github.com/ethereum/wiki/wiki/Ethereum-Contract-ABI)* |  JSON-encoded ABI. Only returned with contracts initially compiled by BlockCypher.

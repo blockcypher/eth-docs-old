@@ -210,6 +210,8 @@ If you include a **private** key (associated with a funded Ethereum external acc
 
 The **params** property lets you provide arguments to the contract constructor. If your contract has no constructor or the constructor takes no arguments, this property can be omitted.
 
+You can optionally include **value** in wei to transfer to the contract on creation.
+
 Note that for now both the contract solidity source and the ABI are made publicly available for anyone with the contract hash. We will support making the source private to your token in the future. However note that all contracts on the public Ethereum blockchain can be seen in binary form and it's only a matter of time before good decompilers surface.
 
 Resource | Method | Request Object | Return Object
@@ -280,7 +282,7 @@ curl -d @call.json -s https://api.blockcypher.com/v1/eth/main/contracts/0eb688e7
 
 The Call Contract Method endpoint makes every method in your contracts callable simply via an HTTP request. It's a binding that translates a published contract into a set of endpoints (one for each method) and a provided JSON array into a set of arguments to invoke a given method.
 
-To call a method on a given contract, you must include a **private** key associated with a funded external account and a specified **gas_limit** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.).
+To call a method on a given contract, you must include a **private** key associated with a funded external account and a specified **gas_limit** in your request object. **params** are optionally accepted if the contract method allows them. Make sure the JSON types your provide match your contract signature (string, number, etc.). You can optionally include **value** in wei to transfer to this contract method.
 
 The Call Contract endpoint will check the contract ABI to determine whether the method has been declared "constant". If so, no transaction will be created and no gas will be consumed. The method is just called locally on our servers and won't be registered on the blockchain. Otherwise, we will build the call transaction to invoke the method on the Ethereum blockchain and propagate it on the network. Keep in mind that in that case, you will need to wait for the call transaction to be included in a block to see its effects.
 
