@@ -100,11 +100,12 @@ Almost all resources exist under a given blockchain, and follow this pattern:
 
 `https://api.blockcypher.com/$API_VERSION/$COIN/$CHAIN/`
 
-Currently, there's only one version of the API (v1). For Ethereum, this is the resource you'll use:
+Currently, there's only one version of the API (v1). For Ethereum, there are the available blockchains:
 
 Coin | Chain | Resource
 ---- | ----- | --------
 Ethereum | Main | `api.blockcypher.com/v1/eth/main`
+BlockCypher | Test | `api.blockcypher.com/v1/beth/test`
 
 <aside class="notice">
 Unless otherwise noted, all descriptions of direct HTTP requests will assume one of these base resources prepends it. But you can always see the full call in the cURL code sample.
@@ -249,4 +250,51 @@ When cURLing BlockCypher, batching also works when the identifiers aren't the la
 
 <aside class="warning">
 With regard to rate limits, each individual batch call counts as a request; for example, if you request 3 addresses in a batch, you're still using 3 API calls of resources on our end. The big advantage to batching is that you avoid 3 separate round-trip calls/reduce latency. Since the default, non-registered <a href="#rate-limits-and-tokens">rate limit</a> per second is 3, larger batches require a paid API token. To use larger batches <a href="https://accounts.blockcypher.com/">please register.</a>
+</aside>
+
+## Testing
+
+To ease your development process, we offer an Ethereum-compatible internal testnet and faucet. It is identical in form and function to Ethereum mainnet (including the same address/account format and EVM). The chain is private (no data is broadcast, only BlockCypher mines the transactions).
+
+In case you missed the [Resources section](#restful-resources), the BlockCypher Ethereum Testnet is accessible from this resource:
+
+`https://api.blockcypher.com/v1/beth/test`
+
+<aside class="notice">
+We are still evaluating whether to support Ethereum's public testnet Morden. At the moment we only support our internal testnet.
+</aside>
+
+<aside class="warning">
+The address format for Ethereum and BlockCypher Ethereum Testnet are identical! Make sure you are using the right resource when publishing contracts and transactions.
+</aside>
+
+```shell
+# Note resource change to beth/test instead of eth/main
+# Make new address; returns private key/public key/address
+curl -sX POST https://api.blockcypher.com/v1/beth/test/addrs?token=$YOURTOKEN
+{
+  "private": "a98e4f4181805a89322a1cff0da749fe297e3b44d18f17d55a86d4c64c9d5489",
+  "public": "04ec8be2b66782caf8ba4158bf7a2027aaebdcd8a2dbcb52bd9f81668748671a0a3a5494bb85b0a10b3f52ac812246c8bc4c0269d92ef7d9e015090233044b40fe",
+  "address": "1585a07efe60806132c994eb39b5f33f55a1eff8"
+}
+
+# Fund prior address with faucet, in wei
+curl -sd '{"address": "1585a07efe60806132c994eb39b5f33f55a1eff8", "amount": 1000000000000000000}' https://api.blockcypher.com/v1/beth/test/faucet?token=$YOURTOKEN
+{
+  "tx_ref": "a4de50532f1a2b59cd50242ba98f5849aea691ae618c58efc05895cd7786a3d1"
+}
+```
+
+### Test Faucets
+
+To help facilitate automated testing in your applications, a faucet endpoint is available on BlockCypher's Ethereum Testnet. Calling the faucet endpoint, along with passing a valid address, will automatically create---and propagate---a new transaction funding the address with the amount you provide. You can then use the funded address to publish contracts, engage in other transactions, or to aid in automated testing.
+
+This example shows how to leverage the faucet to programmatically fund addresses.
+
+<aside class="notice">
+You need <a href="https://accounts.blockcypher.com/">a token</a> to use test faucets.
+</aside>
+
+<aside class="warning">
+On the BlockCypher's Ethereum Testnet, the faucet will refuse to fund an address with more than 15 quintillion BlockCypher wei (aka 15 ether) and will not fund more than 1 quintillion BlockCypher wei (aka 1 ether) at a time.
 </aside>
