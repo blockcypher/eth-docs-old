@@ -1,3 +1,5 @@
+DEPRECATED - See https://github.com/blockcypher/eth-docs
+
 # BlockCypher's Ethereum Docs
 
 This repository contains all of [BlockCypher's](http://www.blockcypher.com) Ethereum API documentation, presented with the help of [GitHub Pages](https://pages.github.com/) and [Slate](https://github.com/tripit/slate).
